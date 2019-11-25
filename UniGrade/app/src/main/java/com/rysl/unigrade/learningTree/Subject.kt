@@ -2,7 +2,7 @@ package com.rysl.unigrade.learningTree
 
 class Subject(private val key: Int, private val name: String): Learner {
     private val table = "subject"
-    private var percent = -2
+    private var percentage = -2
     private val subID = arrayOf("subID", "modID")
     private val subTable = "link_sub_mod"
     private var workingPercentage: Double? = null
@@ -16,7 +16,7 @@ class Subject(private val key: Int, private val name: String): Learner {
     }
 
     override fun getPercentage(): Int {
-        return percent
+        return percentage
     }
 
     override fun getType(): Boolean? {

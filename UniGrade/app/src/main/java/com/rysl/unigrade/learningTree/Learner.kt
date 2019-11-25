@@ -13,7 +13,7 @@ interface Learner {
 
     fun getAll(): String
 
-    fun getSubTable(): String
+    fun getSubTable(): String?
 
     fun getSubID(index: Int): String
 
