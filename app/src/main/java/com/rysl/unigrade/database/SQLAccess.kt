@@ -6,7 +6,7 @@ import com.rysl.unigrade.learningTree.Learner
 import com.rysl.unigrade.learningTree.Module
 import com.rysl.unigrade.learningTree.Subject
 
-class SQLAcess(private val database: SQLiteHelper) {
+class SQLAccess(private val database: SQLiteHelper) {
 
     //methods for getting data in database
 
