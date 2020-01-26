@@ -8,6 +8,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.rysl.unigrade.constants.MENUPERCENT
 import com.rysl.unigrade.constants.PERCENTBAR
 import com.rysl.unigrade.constants.TABLENAME
 import com.rysl.unigrade.database.SQLAccess
@@ -31,7 +32,7 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
     val editTexts = ArrayList<EditText>()
     val bars = ArrayList<SeekBar>();
 
-    val currentLearners = ArrayList<Learner>()
+    var currentLearners = ArrayList<Learner>()
     val pastLearners = Stack<Learner>()
 
     var tables = arrayOf("subject", "module", "assignment", "end", "card")
@@ -41,6 +42,9 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setDatabase()
+        initialiseUI()
+        makeMenuWidgets()
     }
 
     fun setDatabase(){
@@ -54,7 +58,7 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
 
         bars[PERCENTBAR].setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                menuPercent.setText(bars[PERCENTBAR].progress.toString() + "%")
+                editTexts[MENUPERCENT].setText(bars[PERCENTBAR].progress.toString() + "%")
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
@@ -71,7 +75,36 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
     }
 
     fun makeMenuWidgets(){
+        learnerAddMenu = findViewById(R.id.addMenu)
 
+        buttons.add(findViewById(R.id.testButton))
+
+        editTexts.add(findViewById(R.id.testInput))
+        editTexts.add(findViewById(R.id.testInput2))
+
+        textViews.add(findViewById(R.id.menuTitle))
+        textViews.add(findViewById(R.id.percentTitle))
+        textViews.add(findViewById(R.id.typeTitle))
+
+        spinnerType = findViewById(R.id.spinner)
+        val types = arrayOf("Test", "Coursework")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, types)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerType.adapter = adapter
+    }
+
+    fun makeFinalCardWidgets(){
+
+    }
+
+    //----------------------------------------------------------------------------------------------
+
+    fun getLearner(): ArrayList<Learner>{
+        val learners = database.getLearner(currentLearner, tables[tableIndex])
+        learners.forEach(){item ->
+            item.setWorkingPercentage(database.getPredictedPercentage(item))
+        }
+        return learners
     }
 
     //----------------------------------------------------------------------------------------------
