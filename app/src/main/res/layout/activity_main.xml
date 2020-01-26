@@ -4,15 +4,173 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:baselineAligned="false"
+    android:orientation="horizontal">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tableName"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="tableName"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textAlignment="center"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/col1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/col1"
+        android:layout_width="match_parent"
+        android:layout_height="550dp"
+        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/addMenu"
+            android:layout_width="313dp"
+            android:layout_height="408dp"
+            android:visibility="invisible"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="invisible">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/testButton"
+                    android:layout_width="202dp"
+                    android:layout_height="47dp"
+                    android:text="enter"
+                    android:textColor="?android:attr/textColorPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.90999997" />
+
+                <EditText
+                    android:id="@+id/testInput"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:textColor="?android:attr/textColorPrimary"
+                    app:layout_constraintBottom_toTopOf="@+id/testButton"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.3" />
+
+                <TextView
+                    android:id="@+id/testInput2"
+                    android:layout_width="181dp"
+                    android:layout_height="20dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:textAlignment="center"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="12sp"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toTopOf="@+id/testButton"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/testInput"
+                    app:layout_constraintVertical_bias="0.26999998" />
+
+                <TextView
+                    android:id="@+id/menuTitle"
+                    android:layout_width="135dp"
+                    android:layout_height="41dp"
+                    android:textAlignment="center"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toTopOf="@+id/textView3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/percentTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/percentage"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toTopOf="@+id/testInput2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/testInput"
+                    app:layout_constraintVertical_bias="1.0" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/name"
+                    android:textColor="?android:attr/textColorPrimary"
+                    app:layout_constraintBottom_toTopOf="@+id/testInput"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="188dp"
+                    android:layout_height="30dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toTopOf="@+id/testButton"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/testInput2" />
+
+                <TextView
+                    android:id="@+id/typeTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/type"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toTopOf="@+id/spinner"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/testInput2"
+                    app:layout_constraintVertical_bias="1.0" />
+
+                <SeekBar
+                    android:id="@+id/percentBar"
+                    style="@style/Widget.AppCompat.SeekBar"
+                    android:layout_width="212dp"
+                    android:layout_height="19dp"
+                    android:max="100"
+                    android:progress="3"
+                    app:layout_constraintBottom_toTopOf="@+id/testButton"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/testInput"
+                    app:layout_constraintVertical_bias="0.38" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

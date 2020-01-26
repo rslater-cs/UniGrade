@@ -7,6 +7,12 @@ class Subject(private val key: Int, private val name: String): Learner {
     private val subTable = "link_sub_mod"
     private var workingPercentage: Double? = null
 
+    init{
+        if(key == -2){
+            percentage = -1
+        }
+    }
+
     override fun getParent(): Learner? {
         return null
     }
