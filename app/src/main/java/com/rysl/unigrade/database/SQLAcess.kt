@@ -156,4 +156,31 @@ class SQLAcess(private val database: SQLiteHelper) {
     }
 
     //Methods for deleting data in database
+
+    fun deleteLearner(key: Int, table: String){
+        val connTable = when(table){
+            "subject" -> "module"
+            "module" -> "assignment"
+            else -> "end"
+        }
+
+        if(connTable != "end") {
+            val keys = database.getData("SELECT ID FROM $connTable WHERE LINKID = $key;")
+            while(keys.moveToNext()){
+                deleteLearner(keys.getInt(0), connTable)
+            }
+        }
+        database.setData("DELETE FROM $table WHERE ID = $key")
+    }
+
+    //Methods for editing data in database
+
+    fun editLearner(learner: Learner, name: String, percentage: Int, type: Boolean){
+        var query = "UPDATE ${learner.getTable()} SET NAME = \"$name\""
+        if(learner.getTable() == "assignment"){
+            query += ", PERCENTAGE = $percentage, TYPE = ${this.toBinary(type)}"
+        }
+        query += "WHERE ID = ${learner.getKey()};"
+        database.setData(query)
+    }
 }
