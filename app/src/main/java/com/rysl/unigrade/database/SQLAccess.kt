@@ -58,7 +58,7 @@ class SQLAccess(private val database: SQLiteHelper) {
         return results.getInt(0)
     }
 
-    fun getDescription(learner: Learner): String{
+    fun getDescription(learner: Learner): String?{
         val query = "SELECT DESCRIPTION FROM ASSIGNMENT WHERE ID = ${learner.getKey()};"
         val results = database.getData(query)
         results.moveToNext()
