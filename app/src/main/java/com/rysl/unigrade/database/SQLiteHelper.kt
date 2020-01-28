@@ -17,8 +17,8 @@ class SQLiteHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, n
     }
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL("CREATE TABLE ${TABLE_NAMES[0]} (ID INTEGER PRIMARY KEY NOT NULL, NAME TEXT NOT NULL)")
-        db?.execSQL("CREATE TABLE ${TABLE_NAMES[1]} (ID INTEGER PRIMARY KEY NOT NULL, NAME TEXT NOT NULL, LINKID INTEGER FOREIGN KEY REFERENCES SUBJECT(ID))")
-        db?.execSQL("CREATE TABLE ${TABLE_NAMES[2]} (ID INTEGER PRIMARY KEY NOT NULL, NAME TEXT NOT NULL, PERCENTAGE INTEGER NOT NULL, TYPE BOOLEAN NOT NULL, RESULT INTEGER, DESCRIPTION TEXT, LINKID INTEGER FOREIGN KEY REFERENCES MODULE(ID))")
+        db?.execSQL("CREATE TABLE ${TABLE_NAMES[1]} (ID INTEGER PRIMARY KEY NOT NULL, NAME TEXT NOT NULL, LINKID INTEGER, FOREIGN KEY (LINKID) REFERENCES SUBJECT(ID))")
+        db?.execSQL("CREATE TABLE ${TABLE_NAMES[2]} (ID INTEGER PRIMARY KEY NOT NULL, NAME TEXT NOT NULL, PERCENTAGE INTEGER NOT NULL, TYPE BOOLEAN NOT NULL, RESULT INTEGER, DESCRIPTION TEXT, LINKID INTEGER, FOREIGN KEY (LINKID) REFERENCES SUBJECT(ID))")
         createTutorial()
     }
 
@@ -37,10 +37,12 @@ class SQLiteHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, n
     }
 
     fun setData(query: String){
-        database?.execSQL(query, null)
+        print(query)
+        database?.execSQL(query)
     }
 
     fun getData(query: String): Cursor {
+        print(query)
         return database!!.rawQuery(query, null)
     }
 

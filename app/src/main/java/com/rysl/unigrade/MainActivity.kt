@@ -1,16 +1,14 @@
 package com.rysl.unigrade
 
-import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -20,28 +18,29 @@ import com.rysl.unigrade.database.SQLiteHelper
 import com.rysl.unigrade.learningTree.Learner
 import com.rysl.unigrade.recyclerInterface.RecyclerViewClickListener
 import com.rysl.unigrade.recyclerInterface.RecyclerViewInterface
+import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import kotlin.collections.ArrayList
 
 class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
-    lateinit var database: SQLAccess
-    lateinit var recycler: RecyclerViewInterface
-    lateinit var learnerAddMenu: CardView
-    var currentLearner: Learner? = null
-    lateinit var vibrator: Vibrator
-    lateinit var spinnerType: Spinner
+    private lateinit var database: SQLAccess
+    private lateinit var recycler: RecyclerViewInterface
+    private lateinit var learnerAddMenu: CardView
+    private var currentLearner: Learner? = null
+    private lateinit var vibrator: Vibrator
+    private lateinit var spinnerType: Spinner
 
-    val buttons = ArrayList<Button>()
-    val textViews = ArrayList<TextView>()
-    val editTexts = ArrayList<EditText>()
-    val bars = ArrayList<SeekBar>();
+    private val buttons = ArrayList<Button>()
+    private val textViews = ArrayList<TextView>()
+    private val editTexts = ArrayList<EditText>()
+    private val bars = ArrayList<SeekBar>();
 
-    var currentLearners = ArrayList<Learner>()
-    val pastLearners = Stack<Learner>()
+    private var currentLearners = ArrayList<Learner>()
+    private val pastLearners = Stack<Learner>()
 
-    var tables = arrayOf("subject", "module", "assignment", "end", "card")
-    var tableIndex = 0
-    var menuVisible = false
+    private var tables = arrayOf("subject", "module", "assignment", "end", "card")
+    private var tableIndex = 0
+    private var menuVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,7 +89,6 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
         bars.clear()
     }
 
-
     fun makeMenuWidgets(){
         learnerAddMenu = findViewById(R.id.addMenu)
 
@@ -110,9 +108,48 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
         spinnerType.adapter = adapter
     }
 
+    private fun enterButton(boolType: Boolean, isAdd: Boolean, learner: Learner?, position: Int){
+        buttons[MENUBUTTON].setOnClickListener { enterMenu(boolType, isAdd, learner, position) }
+    }
+
+    fun enterMenu(type: Boolean, isAdd: Boolean, learner: Learner?, position: Int){
+        val name = editTexts[MENUNAME].text.toString()
+        var percent = -1
+        var boolType: Boolean? = null
+
+        if(type){
+            percent = bars[PERCENTBAR].progress
+            boolType = getType()
+        }
+        hideKeyboard(this)
+
+        if(isAdd){
+            database.setLearner(currentLearner, name, percent, boolType)
+            updateButtonsFromLearners()
+        } else{
+            currentLearners[position-1] = learner!!
+            database.editLearner(learner, name, percent, boolType)
+            updateDataset(position)
+        }
+        addMenu.visibility = View.GONE
+        menuVisible = !menuVisible
+        vibrator.vibrate(100)
+        vibrator.vibrate(100)
+    }
+
+    fun getType(): Boolean{
+        if(spinnerType.selectedItem.toString() == "Test") return true
+        return false
+    }
+
+    fun updateCard(){
+        textViews[MENUTITLE].text = tables[tableIndex]
+        textViews[TABLENAME].text = tables[tableIndex]
+    }
+
     //Summary UI Methods
 
-    fun makeFinalCardWidgets(){
+    private fun makeFinalCardWidgets(){
         clearUI()
 
         textViews.add(findViewById(R.id.title))
@@ -146,16 +183,16 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
         })
 
         val learner = currentLearner!!
-        buttons[SUBMITBUTTON].setOnClickListener(View.OnClickListener {
-            database.setResult(learner, bars[RESULTBAR].getProgress())
+        buttons[SUBMITBUTTON].setOnClickListener {
+            database.setResult(learner, bars[RESULTBAR].progress)
             textViews[RESULT].text = getResult()
-        })
+        }
 
-        buttons[DESCRIPTIONBUTTON].setOnClickListener(View.OnClickListener {
+        buttons[DESCRIPTIONBUTTON].setOnClickListener {
             tableIndex++
             setContentView(R.layout.description_former)
             makeDescriptionFormer()
-        })
+        }
 
     }
 
@@ -178,7 +215,7 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
         return "Current result: $result%"
     }
 
-    fun makeDescriptionFormer(){
+    private fun makeDescriptionFormer(){
         val descriptionEnterButton = findViewById<Button>(R.id.submitDescription)
         val descriptionTextBBox = findViewById<EditText>(R.id.editDescription)
 
@@ -190,8 +227,32 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
         })
     }
 
-
     //----------------------------------------------------------------------------------------------
+    //interacting with learners
+
+    fun createLearnerMenu(table: String){
+        textViews[MENUNAME].text = ""
+
+        if(tableIndex < 3){
+            var boolType = false
+            if(menuVisible)addMenu.visibility = View.GONE
+            else{
+                textViews[MENUTITLE].text = table
+
+                if(tableIndex == 2){
+                    bars[PERCENTBAR].max = getMaxBarValue()
+                    boolType = true
+                }
+
+                enterButton(boolType, true, null, -1)
+                addMenu.visibility = View.VISIBLE
+            }
+
+            setPercentVisible(boolType)
+            setTypeVisible(boolType)
+            menuVisible = !menuVisible
+        }
+    }
 
     fun getLearner(): ArrayList<Learner>{
         val learners = database.getLearner(currentLearner, tables[tableIndex])
@@ -199,6 +260,77 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
             item.setWorkingPercentage(database.getPredictedPercentage(item))
         }
         return learners
+    }
+
+    fun getMaxBarValue(): Int{
+        var maxValue = 0
+        currentLearners.forEach{ item ->
+            maxValue += item.getPercentage()
+        }
+        return 100-maxValue
+    }
+
+    fun getViewState(visiblility: Boolean): Int{
+        var viewState = View.GONE
+        if(visiblility){
+            viewState = View.VISIBLE
+        }
+        return viewState
+    }
+
+    fun setPercentVisible(visible: Boolean){
+        val viewState = getViewState(visible)
+        textViews[PERCENTTITLE].visibility = viewState
+        textViews[MENUPERCENT].visibility = viewState
+        bars[PERCENTBAR].visibility = viewState
+    }
+
+    fun setTypeVisible(visible: Boolean){
+        val viewState = getViewState(visible)
+        textViews[TYPETITLE].visibility = viewState
+        spinnerType.visibility = viewState
+    }
+
+    fun updateButtonsFromLearners(){
+        currentLearners = getLearner()
+        recycler.addLearner(currentLearners)
+    }
+
+    fun updateDataset(position: Int){
+        val updatedLearner = getLearner()[position-1]
+        currentLearners[position-1] = updatedLearner
+        recycler.updateLearner(updatedLearner, position)
+    }
+
+    fun changeDataset(){
+        if(tableIndex == 3){
+            setContentView(R.layout.final_card_layout)
+            makeFinalCardWidgets()
+        } else{
+            currentLearners = getLearner()
+            recycler.refreshView(currentLearners)
+        }
+    }
+
+    fun deleteFromDatabase(learner: Learner){
+        database.deleteLearner(learner.getKey(), learner.getTable())
+    }
+
+    fun editLearnerMenu(position: Int){
+        val learnerToEdit = currentLearners[position-1]
+        textViews[MENUTITLE].text = learnerToEdit.getName()
+        editTexts[MENUNAME].setText("")
+        var boolType = false
+
+        if(tableIndex == 2){
+            bars[PERCENTBAR].max = getMaxBarValue()+learnerToEdit.getPercentage()
+            boolType = true
+        }
+        setPercentVisible(boolType)
+        setTypeVisible(boolType)
+        addMenu.visibility = View.VISIBLE
+        enterButton(boolType, false, learnerToEdit, position)
+        menuVisible = !menuVisible
     }
 
     //----------------------------------------------------------------------------------------------
@@ -235,6 +367,8 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
         return menuVisible
     }
 
+    //System methods
+
     @Override
     override fun onBackPressed() {
         if(tableIndex == 0 && !menuVisible){
@@ -253,8 +387,20 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
             }
             if(tableIndex == 2){
                 setContentView(R.layout.activity_main)
-                createUI()
+                initialiseUI()
             }
         }
+    }
+
+    //CREDIT: https://stackoverflow.com/users/680583/rmirabelle
+    fun hideKeyboard(activity: Activity) {
+        val imm = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        //Find the currently focused view, so we can grab the correct window token from it.
+        var view = activity.currentFocus
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = View(activity)
+        }
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }

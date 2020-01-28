@@ -18,8 +18,6 @@ class SQLAccess(private val database: SQLiteHelper) {
 
         val results = database.getData(query)
 
-        val learners = ArrayList<Learner>()
-
         return when(table){
             "subject" -> packSubjects(results)
             "module" -> packModules(results, parent!!)
@@ -65,7 +63,7 @@ class SQLAccess(private val database: SQLiteHelper) {
         return results.getString(0)
     }
 
-    fun getWorkingPercent(learner: Learner, percentages: java.util.ArrayList<Double>): java.util.ArrayList<Double> {
+    fun getWorkingPercent(learner: Learner, percentages: ArrayList<Double>): ArrayList<Double> {
         var percentages = percentages
         var table = "end"
         when (learner.getTable()) {
@@ -116,15 +114,16 @@ class SQLAccess(private val database: SQLiteHelper) {
 
     //Methods for setting data in database
 
-    fun setLearner(parent: Learner?, name: String, percentage: Int, type: Boolean){
-        var query = "";
+    fun setLearner(parent: Learner?, name: String, percentage: Int, type: Boolean?){
+        var query = ""
         if(parent == null){
             query = this.subjectInsertQuery(name)
         } else if(parent.getTable() == "subject"){
             query = this.moduleInsertQuery(name, parent.getKey())
         } else{
-            query = this.assignmentInsertQuery(name, percentage, type, parent.getKey())
+            query = this.assignmentInsertQuery(name, percentage, type!!, parent.getKey())
         }
+        print(query)
         database.setData(query)
     }
 
@@ -175,10 +174,10 @@ class SQLAccess(private val database: SQLiteHelper) {
 
     //Methods for editing data in database
 
-    fun editLearner(learner: Learner, name: String, percentage: Int, type: Boolean){
+    fun editLearner(learner: Learner, name: String, percentage: Int, type: Boolean?){
         var query = "UPDATE ${learner.getTable()} SET NAME = \"$name\""
         if(learner.getTable() == "assignment"){
-            query += ", PERCENTAGE = $percentage, TYPE = ${this.toBinary(type)}"
+            query += ", PERCENTAGE = $percentage, TYPE = ${this.toBinary(type!!)}"
         }
         query += "WHERE ID = ${learner.getKey()};"
         database.setData(query)
