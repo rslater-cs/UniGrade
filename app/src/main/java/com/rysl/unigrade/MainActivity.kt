@@ -10,8 +10,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.rysl.unigrade.constants.*
 import com.rysl.unigrade.database.SQLAccess
 import com.rysl.unigrade.database.SQLiteHelper
@@ -29,6 +32,7 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
     private var currentLearner: Learner? = null
     private lateinit var vibrator: Vibrator
     private lateinit var spinnerType: Spinner
+    private lateinit var darkLightButton: FloatingActionButton
 
     private val buttons = ArrayList<Button>()
     private val textViews = ArrayList<TextView>()
@@ -43,6 +47,15 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
     private var menuVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        /*if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            setTheme(R.style.Theme_AppCompat_NoActionBar)
+            println("YES")
+        } else{
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            setTheme(R.style.Theme_AppCompat_Light_NoActionBar)
+            println("NO")
+        }*/
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setDatabase()
@@ -58,13 +71,32 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
     fun initialiseUI(){
         clearUI()
 
+        darkLightButton = findViewById(R.id.LightDark)
+        /*
+        darkLightButton.setOnClickListener {
+            if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                setTheme(R.style.Theme_AppCompat_NoActionBar)
+                findViewById<ConstraintLayout>(R.id.background).rootView.setBackgroundColor(0)
+                println("YES")
+            } else{
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                setTheme(R.style.Theme_AppCompat_Light_NoActionBar)
+                findViewById<ConstraintLayout>(R.id.background).rootView.setBackgroundColor(255)
+                println("NO")
+            }
+            setContentView(R.layout.activity_main)
+            setDatabase()
+            initialiseUI()
+        }*/
+
         val view = findViewById<RecyclerView>(R.id.recycler)
         bars.add(findViewById(R.id.percentBar))
         currentLearners = getLearner()
 
         bars[PERCENTBAR].setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                editTexts[MENUPERCENT].setText(bars[PERCENTBAR].progress.toString() + "%")
+                textViews[MENUPERCENT].setText(bars[PERCENTBAR].progress.toString() + "%")
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
@@ -95,11 +127,11 @@ class MainActivity: AppCompatActivity(), RecyclerViewClickListener {
         buttons.add(findViewById(R.id.testButton))
 
         editTexts.add(findViewById(R.id.testInput))
-        editTexts.add(findViewById(R.id.testInput2))
 
         textViews.add(findViewById(R.id.menuTitle))
         textViews.add(findViewById(R.id.percentTitle))
         textViews.add(findViewById(R.id.typeTitle))
+        textViews.add(findViewById(R.id.testInput2))
 
         spinnerType = findViewById(R.id.spinner)
         val types = arrayOf("Test", "Coursework")

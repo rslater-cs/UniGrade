@@ -11,13 +11,13 @@ const val TABLENAME = 0
 const val MENUTITLE = 1
 const val PERCENTTITLE = 2
 const val TYPETITLE = 3
+const val MENUPERCENT = 4
 
 
 const val MENUBUTTON = 0
 
 
 const val MENUNAME = 0
-const val MENUPERCENT = 1
 
 //For card summary
 const val TITLE = 0

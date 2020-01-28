@@ -10,12 +10,12 @@ import com.rysl.unigrade.R
 import com.rysl.unigrade.learningTree.Learner
 
 
-class RecyclerAdapter(val dataset: ArrayList<Learner>, private val itemListener: RecyclerViewClickListener): RecyclerView.Adapter<RecyclerAdapter.ViewLayout>() {
+class RecyclerAdapter(private val dataset: ArrayList<Learner>, private val itemListener: RecyclerViewClickListener): RecyclerView.Adapter<RecyclerAdapter.ViewLayout>() {
 
     class ViewLayout(view: View, private val itemListener: RecyclerViewClickListener): RecyclerView.ViewHolder(view), View.OnClickListener, View.OnLongClickListener{
         var cardWidgets = arrayOf<TextView>(view.findViewById(R.id.nameContent),
                 view.findViewById(R.id.addButton), view.findViewById(R.id.currentWorkingPercentage),
-                view.findViewById(R.id.nameContent), view.findViewById(R.id.typeContent))
+                view.findViewById(R.id.percentContent), view.findViewById(R.id.typeContent))
         var cv = view.findViewById<CardView>(R.id.card)
 
         init{
@@ -46,14 +46,17 @@ class RecyclerAdapter(val dataset: ArrayList<Learner>, private val itemListener:
         val learner = dataset[position]
         val cardContents = arrayOf("", "", "", "", "")
         when(learner.getPercentage()){
-            -2 -> {cardContents[1] = learner.getName()}
-            -1 -> {cardContents[0] = learner.getName()}
-            else -> {cardContents[3] = "${learner.getPercentage()}%"
-                cardContents[2] = "predicted percentage: ${learner.workingPercentage()}%"
-            cardContents[4] = when(learner.getType()){
-                true -> "Test"
-                else -> "Coursework"
-            }}
+            -1 -> {cardContents[1] = learner.getName()}
+            -2 -> {
+                cardContents[0] = learner.getName()
+                cardContents[2] = "predicted percentage: ${learner.workingPercentage()}%"}
+            else -> {
+                cardContents[0] = learner.getName()
+                cardContents[3] = "${learner.getPercentage()}%"
+                cardContents[4] = when(learner.getType()){
+                    true -> "Test"
+                    else -> "Coursework"
+                }}
         }
         cardContents.forEachIndexed { index, item ->
             holder.cardWidgets[index].text = item

@@ -13,7 +13,7 @@
             android:id="@+id/finalCard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:cardCornerRadius="25dp"
+            app:cardCornerRadius="0dp"
             app:cardElevation="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
